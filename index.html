@@ -14,38 +14,60 @@
       canvas.height = document.documentElement.clientHeight;
       var ctx = canvas.getContext("2d");
       let painting = false;
+      let last;
       var isTouchDevice = "ontouchstart" in document.documentElement; //判断是否是可触屏设备
       if (isTouchDevice) {
-        canvas.ontouchmove = (e) => {
+        canvas.ontouchstart = (e) => {
           console.log(e);
           let x = e.touches[0].clientX;
           let y = e.touches[0].clientY;
-          ctx.beginPath();
-          ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
-          ctx.stroke();
-          ctx.fill();
+          last=[x,y]
+        //   ctx.beginPath();
+        //   ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+        //   ctx.stroke();
+        //   ctx.fill();
         };
+        canvas.ontouchmove=(e)=>{
+            let x = e.touches[0].clientX;
+          let y = e.touches[0].clientY;
+          drawLine(last[0],last[1],x,y)
+          last=[x,y]
+        }
       } else {
         //不是的话就监听鼠标事件
-        canvas.onmousedown = () => {
+        canvas.onmousedown = (e) => {
           painting = true;
+          last=[e.clientX,e.clientY]
+          console.log(last);
         };
         canvas.onmouseup = () => {
           painting = false;
         };
         canvas.onmousemove = (e) => {
           if (painting === true) {
+              drawLine(last[0],last[1],e.clientX,e.clientY)
+              last=[e.clientX,e.clientY]
             //   console.log(e.clientY);
-            ctx.beginPath();
-            ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI, false);
-            ctx.stroke();
-            ctx.fill();
+            // ctx.beginPath();
+            // ctx.arc(e.clientX, e.clientY, 10, 0, 2 * Math.PI, false);
+            // ctx.stroke();
+            // ctx.fill();
           }
         };
       }
       //   console.log(isTouchDevice);
       ctx.fillStyle = "black";
       ctx.strokeStyle = "none";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.lineJoin=20
+      function drawLine(x1,y1,x2,y2){
+          ctx.beginPath()
+          ctx.moveTo(x1,y1)
+          ctx.lineTo(x2,y2)
+          ctx.closePath()
+          ctx.stroke()
+      }
     </script>
   </body>
 </html>
